@@ -1,4 +1,4 @@
-var apiKey = "YOUR KEY HERE";
+var apiKey = "x_XCDoMssgvRUBStbiPn";
 
 /**
  * Helper function to select stock data
@@ -23,10 +23,17 @@ function getMonthlyData() {
   var queryUrl = `https://www.quandl.com/api/v3/datasets/WIKI/AMZN.json?start_date=2016-10-01&end_date=2017-10-01&collapse=monthly&api_key=${apiKey}`;
   d3.json(queryUrl).then(function(data) {
     // @TODO: Unpack the dates, open, high, low, close, and volume
+    var dates = unpack(data.dataset.data, 0);
+    var openPrices = unpack(data.dataset.data, 1);
+    var highPrices = unpack(data.dataset.data,2);
+    var lowPrices = unpack(data.dataset.data,3);
+    var closingPrices = unpack(data.dataset.data,4);
+    var volume = unpack(data.dataset.data,5);
     
     buildTable(dates, openPrices, highPrices, lowPrices, closingPrices, volume);
   });
 }
+
 
 function buildTable(dates, openPrices, highPrices, lowPrices, closingPrices, volume) {
   var table = d3.select("#summary-table");
@@ -49,20 +56,40 @@ function buildPlot() {
   d3.json(url).then(function(data) {
 
     // @TODO: Grab Name, Stock, Start Date, and End Date from the response json object to build the plots
-    
-    // @TODO: Unpack the dates, open, high, low, and close prices
+      var name = data.dataset.name;
+      var stock = data.dataset.dataset_code;
+      var startDate = data.dataset.start_date;
+      var endDate = data.dataset.end_date;
 
+    // @TODO: Unpack the dates, open, high, low, and close prices
+    var dates = unpack(data.dataset.data, 0);
+    var openingPrices = unpack(data.dataset.data, 1);
+    var highPrices = unpack(data.dataset.data,2);
+    var lowPrices = unpack(data.dataset.data,3);
+    var closingPrices = unpack(data.dataset.data,4);
+    
 
     getMonthlyData();
 
     // Closing Scatter Line Trace
     var trace1 = {
       // @TODO: YOUR CODE HERE
+      x: dates,
+      y: closingPrices,
+      type: "scater",
+      mode: "lines",
+      name: name
     };
 
     // Candlestick Trace
     var trace2 = {
       // @TODO: YOUR CODE HERE
+      type: "candlestick",
+      x: dates,
+      high: highPrices,
+      low: lowPrices,
+      open: openingPrices,
+      close: closingPrices,
     };
 
     var data = [trace1, trace2];
@@ -86,3 +113,5 @@ function buildPlot() {
 }
 
 buildPlot();
+
+
